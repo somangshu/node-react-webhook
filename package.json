@@ -1,0 +1,40 @@
+{
+    "name": "node-react-webhook-example",
+    "version": "1.0.0",
+    "author": "Somangshu Goswami <somangshugoswami1508@gmail.com>",
+    "description": "Sample implementation of webhook using node server and react client",
+    "private": true,
+    "scripts": {
+        "start": "node ./bin/www",
+        "dev": "echo 'run dev' & npm start",
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "nodemon": "./node_modules/nodemon/bin/nodemon.js --config nodemon.json --exec npm run dev "
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/trieng2000/klanto-landing.git"
+    },
+    "keywords": [
+        "node",
+        "js",
+        "react",
+        "webhook",
+        "video-app"
+    ],
+    "engines": {
+        "node": ">=0.10.26"
+    },
+    "dependencies": {
+        "body-parser": "^1.19.0",
+        "compression": "1.7.4",
+        "ejs": "^3.1.5",
+        "express": "4.17.1",
+        "method-override": "3.0.0",
+        "morgan": "1.10.0",
+        "response-time": "2.3.2",
+        "serve-favicon": "2.5.0"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.4"
+    }
+}
