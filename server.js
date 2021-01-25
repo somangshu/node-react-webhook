@@ -24,34 +24,69 @@ app.use(responseTime());
 app.use(methodOverride());
 app.use(compress());
 
-// app.set("views", __dirname + "/views");
-// app.set("view engine", "html");
-
 app.use(favicon(path.join(__dirname, "public", "favicon.png")));
 
 app.use(express.static(path.join(__dirname, "public")));
 
-// app.post("/api/call-me", function (req, res) {
-//     var name = req.body.name;
-//     var email = req.body.email;
-//     var message = req.body.message;
-
-//     sendEmail(email, name, message)
-//         .then((r) => {
-//             console.log(r);
-//             res.send({ message: "success" });
-//         })
-//         .catch((err) => {
-//             console.log(err);
-//             res.status(400);
-//             res.send({ error: "Error sending email" });
-//         });
-
-//     // return res.send("success");
-// });
-
 app.all("/meeting/*", function (req, res) {
     res.sendFile("index.html", { root: __dirname + "/public/" });
+});
+
+// websocket initialization
+const webSocketsServerPort = 8000;
+const webSocketServer = require("websocket").server;
+const http = require("http");
+// Spinning the http server and the websocket server.
+const server = http.createServer();
+server.listen(webSocketsServerPort);
+const wsServer = new webSocketServer({
+    httpServer: server,
+});
+
+const clients = {};
+
+// This code generates unique userid for everyuser.
+const getUniqueID = () => {
+    const s4 = () =>
+        Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
+    return s4() + s4() + "-" + s4();
+};
+
+const typesDef = {
+    USER_EVENT: "userevent",
+    CONTENT_CHANGE: "contentchange",
+};
+
+const sendMessage = (json) => {
+    // We are sending the current data to all connected clients
+    Object.keys(clients).map((client) => {
+        clients[client].sendUTF(json);
+    });
+};
+
+wsServer.on("request", function (request) {
+    var userID = getUniqueID();
+    console.log(new Date() + " Recieved a new connection from origin " + request.origin + ".");
+    // You can rewrite this part of the code to accept only the requests from allowed origin
+    const connection = request.accept(null, request.origin);
+    clients[userID] = connection;
+    console.log("connected: " + userID + " in " + Object.getOwnPropertyNames(clients));
+
+    connection.on("message", function (message) {
+        if (message.type === "utf8") {
+            const dataFromClient = JSON.parse(message.utf8Data);
+            const json = { timer_duration: dataFromClient.timer_duration };
+            sendMessage(JSON.stringify(json));
+        }
+    });
+
+    // user disconnected
+    connection.on("close", function (connection) {
+        console.log(new Date() + " Peer " + userID + " disconnected.");
+        delete clients[userID];
+    });
 });
 
 module.exports = app;

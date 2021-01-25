@@ -19,11 +19,14 @@ module.exports = {
                 loader: "babel-loader",
                 exclude: /node_modules/,
             },
-            // check the url loader module
-            // {
-            // 	test: /\.(png|jpe?g|gif)$/,
-            // 	loader: 'url-loader?limit=10000&name=img/[name].[ext]'
-            // }
+            {
+                test: /\.mp3$/,
+                include: path.resolve("../client/src/js/sounds"),
+                loader: "file-loader",
+                options: {
+                    name: "notification.mp3",
+                },
+            },
         ],
     },
     optimization: {

@@ -9,10 +9,10 @@ export default {
     },
     Host: {
         component: Host,
-        path: "meeting/:id/host",
+        path: "/meeting/:id/host",
     },
     Participant: {
         component: Participant,
-        path: "meeting/:id/participant/",
+        path: "/meeting/:id/participant/",
     },
 };
